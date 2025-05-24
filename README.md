@@ -1,5 +1,5 @@
 # Expense Tracker (ReactJS)
-## Date:
+## Date: 24/05/25
 
 ## AIM
 To develop a simple Expense Tracker application using React that allows users to manage their personal finances by adding, viewing, and deleting income and expense transactions, while dynamically calculating the current balance, total income, and total expenses.
@@ -82,10 +82,218 @@ Form inputs
 Transaction list (with color coding)
 
 ## PROGRAM
+app.js
+```
+import React, { useState } from 'react';
+import './app.css';
 
+function App() {
+  const [transactions, setTransactions] = useState([]);
+  const [text, setText] = useState('');
+  const [amount, setAmount] = useState('');
+
+  const addTransaction = (e) => {
+    e.preventDefault();
+
+    if (!text || !amount) return;
+
+    const newTransaction = {
+      id: Date.now(),
+      text,
+      amount: +amount,
+    };
+
+    setTransactions([newTransaction, ...transactions]);
+    setText('');
+    setAmount('');
+  };
+
+  const deleteTransaction = (id) => {
+    setTransactions(transactions.filter((t) => t.id !== id));
+  };
+
+  const balance = transactions.reduce((acc, t) => acc + t.amount, 0).toFixed(2);
+  const income = transactions
+    .filter((t) => t.amount > 0)
+    .reduce((acc, t) => acc + t.amount, 0)
+    .toFixed(2);
+  const expense = (
+    transactions.filter((t) => t.amount < 0).reduce((acc, t) => acc + t.amount, 0) * -1
+  ).toFixed(2);
+
+  return (
+    <div className="container">
+      <h2> Expense Tracker</h2>
+      <div className="balance">
+        <h3>Your Balance</h3>
+        <h1>₹{balance}</h1>
+      </div>
+
+      <div className="summary">
+        <div>
+          <h4>Income</h4>
+          <p className="plus">+₹{income}</p>
+        </div>
+        <div>
+          <h4>Expense</h4>
+          <p className="minus">-₹{expense}</p>
+        </div>
+      </div>
+
+      <form onSubmit={addTransaction}>
+        <h3>Add New Transaction</h3>
+        <input
+          type="text"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Enter description..."
+        />
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="Enter amount (positive or negative)"
+        />
+        <button type="submit">Add Transaction</button>
+      </form>
+
+      <h3>History</h3>
+      <ul className="list">
+        {transactions.map((t) => (
+          <li key={t.id} className={t.amount >= 0 ? 'plus' : 'minus'}>
+            {t.text} <span>₹{t.amount}</span>
+            <button onClick={() => deleteTransaction(t.id)}>❌</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+```
+app.css
+```
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'verdana', sans-serif;
+}
+
+.container {
+  max-width: 400px;
+  margin: 30px auto;
+  padding: 20px;
+  background: violet;
+  border-radius: 10px;
+  box-shadow: 0 0 10px black;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.balance {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.balance h1 {
+  margin-top: 5px;
+  color: limegreen;
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+  background: lightpink;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.summary div {
+  width: 48%;
+  text-align: center;
+}
+
+.plus {
+  color: green;
+}
+
+.minus {
+  color: red;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form input {
+  padding: 10px;
+  margin: 10px 0;
+  border: 3px solid ;
+  border-radius: 5px;
+}
+
+form button {
+  padding: 10px;
+  background: cyan;
+  color: black;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background: yellow;
+}
+
+.list {
+  list-style: none;
+  margin-top: 10px;
+}
+
+.list li {
+  background: whitesmoke;
+  margin: 10px 0;
+  padding: 10px;
+  border-right: 5px solid;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.list li.plus {
+  border-color: painted;
+}
+
+.list li.minus {
+  border-color: red;
+}
+
+.list button {
+  background: ghostwhite;
+  border: none;
+  color: whitesmoke;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.list button:hover {
+  color: red;
+}
+```
 
 ## OUTPUT
 
+![image](https://github.com/user-attachments/assets/337efaa4-f57b-4d0b-b8d7-bd0337bd3c6b)
 
 ## RESULT
 A fully functional React-based Expense Tracker application was successfully developed. 
